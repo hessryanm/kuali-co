@@ -29,6 +29,8 @@ Elevator.create = function () {
   elev.currentFloor = 1;
   elev.occupied = false;
   elev.needsMaintenance = false;
+  elev.destFloor = null;
+  elev.moving = false;
 
   return elev;
 };
