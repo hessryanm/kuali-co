@@ -1,0 +1,18 @@
+Elevator will be a class
+Elevator controller will be a controller class
+
+Elevator will report to controller
+
+Requests will go to controller, which will decide which elevator fulfills task
+Buttons pushed in elevator immediately start moving, and send new destination to controller
+
+# of elevators and floors determined by command-line arguments
+
+Elevators have properties:
+  # of trips
+  current floor
+  occupied (how will it know?  Assume that once all dests are set, it's empty?)
+  needs maintenance
+
+
+Elevator Controller has array? obj? of elevators

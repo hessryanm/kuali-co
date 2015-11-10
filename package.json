@@ -1,0 +1,25 @@
+{
+  "name": "elevators",
+  "version": "0.0.0",
+  "description": "KualiCo Coding Exercise",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hessryanm/kuali-co.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hessryanm/kuali-co/issues"
+  },
+  "homepage": "https://github.com/hessryanm/kuali-co",
+  "dependencies": {
+    "minimist": "^1.2.0"
+  },
+  "devDependencies": {
+    "chai": "^3.4.1"
+  }
+}
