@@ -160,7 +160,10 @@ p._addDestination = function (floor) {
     return false;
   }
 
-  me.destinations.push(floor);
+  if (!_.contains(me.destinations, floor)) {
+    me.destinations.push(floor);
+  }
+
   if (!me.moving) {
     if (floor < me.currentFloor) {
       me.direction = -1;
