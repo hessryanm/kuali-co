@@ -3,6 +3,7 @@
 var _ = require("lodash")
   , EventEmitter = require('events').EventEmitter
   , util = require("util")
+  , PromiseA = require("bluebird")
   ;
 
 /**
@@ -145,12 +146,17 @@ p._addDestination = function (floor) {
   }
 
   if (me.currentFloor === floor) {
-    //emit "at dest"
+    me.emit("already_at_destination");
     return false;
   }
 
   if (floor > me.MAX_FLOOR || floor < me.MIN_FLOOR) {
-    //emit "can't go there"
+    me.emit("floor_out_of_bounds", floor, me.MIN_FLOOR, me.MAX_FLOOR);
+    return false;
+  }
+
+  if (me.needsMaintenance) {
+    me.emit("call_when_needs_maintenance");
     return false;
   }
 
@@ -165,6 +171,7 @@ p._addDestination = function (floor) {
   me.moving = true;
 
   me.destinations.sort(me._getDestinationsSortFunction());
+  me.execute();
 
   return true;
 };
@@ -232,6 +239,49 @@ p.goToFloor = function (floor) {
   return false;
 };
 
+/**********************
+*** Event Functions ***
+**********************/
+
+/**
+* @function
+* @public
+* @name Elevator.prototype._arrivedAtFloor
+* @description called when the elevator arrives at a floor
+* @param {Number} floor - the floor the elevator just arrived at
+* @returns {Promise} - when it's done at this floor (doors have closed)
+*/
+p.arrivedAtFloor = function (floor) {
+  var me = this
+    ;
+
+  if (!_.isNumber(floor)) {
+    throw new Error("Elevator.prototype.arrivedAtFloor called with a non-number: "+floor);
+  }
+
+  me.emit("at_floor", floor);
+  me.currentFloor = floor;
+
+  if (_.contains(me.destinations), floor) {
+    _.remove(me.destinations, function (val) {
+      return val === floor;
+    });
+    //call to interface to open doors
+    me.emit("doors_open");
+    return me.waitForLoad().then(function () {
+      //call to interface to close doors
+      me.emit("doors_closed");
+      if (me.destinations.length === 0) {
+        me.occupied = false;
+        me.emit("unoccupied");
+      }
+      me.execute();
+    });
+  }
+
+  return PromiseA.resolve(null);
+};
+
 /**
 * @function
 * @public
@@ -245,12 +295,32 @@ p.insideButtonPressed = function (floor) {
     ;
 
   if (!_.isNumber(floor)) {
-    throw new Error("Elevator.prototype.goToFloor called with a non-number: "+floor);
+    throw new Error("Elevator.prototype.insideButtonPressed called with a non-number: "+floor);
   }
 
   if (me.goToFloor(floor)) {
+    if (!me.occupied) {
+      me.emit("occupied");
+    }
     me.occupied = true;
   }
+};
+
+/***********************
+*** Timing Functions ***
+***********************/
+
+//called when the elevator should wait with its doors open
+p.waitForLoad = function () {
+  //stops execute from doing its thing
+  //waits an appropriate amount of time
+  return PromiseA.resolve(null);
+};
+
+//this tells the elevator to actually do something
+p.execute = function () {
+  //if no destinations, does nothing
+  //starts consuming its destinations and moving
 };
 
 module.exports = Elevator;
