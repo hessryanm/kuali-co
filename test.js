@@ -31,4 +31,31 @@ describe("Test elevator class", function () {
     elevator.occupied.should.be.a('boolean').and.be.false;
     elevator.needsMaintenance.should.be.a('boolean').and.be.false;
   });
+
+  it ("should add one to the elevator's 'numTrips' property when addTrip is called", function () {
+    elevator.numTrips.should.equal(0);
+    elevator.addTrip();
+    elevator.numTrips.should.equal(1);
+    elevator.addTrip();
+    elevator.numTrips.should.equal(2);
+  });
+
+  it ("should set the elevator's 'needsMaintenance' property to true if numTrips = max trips when addTrip is called", function () {
+    elevator.numTrips = 98;
+    elevator.addTrip();
+    elevator.numTrips.should.equal(99);
+    elevator.needsMaintenance.should.be.false;
+    elevator.addTrip();
+    elevator.numTrips.should.equal(100);
+    elevator.needsMaintenance.should.be.true;
+  });
+
+  it ("should set 'needsMaintenance' even if new numTrips is > max trips in addTrip", function () {
+    elevator.needsMaintenance.should.be.false;
+    elevator.numTrips = 500;
+    elevator.needsMaintenance.should.be.false;
+    elevator.addTrip();
+    elevator.numTrips.should.equal(501);
+    elevator.needsMaintenance.should.be.true;
+  });
 });
