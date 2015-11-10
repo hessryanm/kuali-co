@@ -215,6 +215,7 @@ p.addTrip = function () {
   me.numTrips++;
   if (me.numTrips >= TRIPS_TILL_MAINTENANCE) {
     me.needsMaintenance = true;
+    me.emit("need_maintenance");
   }
 };
 
@@ -232,6 +233,11 @@ p.goToFloor = function (floor) {
 
   if (!_.isNumber(floor)) {
     throw new Error("Elevator.prototype.goToFloor called with a non-number: "+floor);
+  }
+
+  //if we are on the floor we're supposed to go to, just open the doors.
+  if (floor === me.currentFloor) {
+    return me.arrivedAtFloor(floor);
   }
 
   if (me._addDestination(floor)) {
