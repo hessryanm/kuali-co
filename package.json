@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/hessryanm/kuali-co",
   "dependencies": {
+    "lodash": "^3.10.1",
+    "lodash.sortbyorder": "^3.4.4",
     "minimist": "^1.2.0"
   },
   "devDependencies": {
